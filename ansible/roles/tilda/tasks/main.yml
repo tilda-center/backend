@@ -1,0 +1,5 @@
+---
+- name: install tilda packages
+  with_items: "{{ tilda_packages }}"
+  package:
+    name: "{{ item.name }}"

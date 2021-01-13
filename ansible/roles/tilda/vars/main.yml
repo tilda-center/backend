@@ -1,4 +1,5 @@
 ---
 tilda_packages:
-  - name: py37-ldap3
-  - name: py37-sortedcontainers
+  - name: "{{ python_prefix }}-ldap3"
+  - name: "{{ python_prefix }}-sortedcontainers"
+  - name: "{{ python_prefix }}-unidecode"

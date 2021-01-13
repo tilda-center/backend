@@ -8,7 +8,7 @@ class TokenSchema(BaseSchema):
     password = fields.Str(required=True, description='Password')
 
 
-class BaseUserSchema(BaseSchema):
+class UserSchema(BaseSchema):
     active = fields.Boolean(description='Activate the user')
     admin = fields.Boolean(description='Is the user admin?')
     email = fields.Email(required=True, description='Email')
@@ -41,7 +41,3 @@ class LoginSchema(RefreshSchema):
 class ResetSchema(BaseSchema):
     token = fields.String(required=True)
     password = fields.String(required=True)
-
-
-class UserSchema(BaseUserSchema):
-    pass

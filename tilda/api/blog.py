@@ -10,11 +10,12 @@ from ..models.user import User
 from ..schemas.blog import BlogPageOutSchema, BlogSchema
 
 from werkzeug.utils import secure_filename
-from flask import request, current_app, send_from_directory, url_for
+from flask import current_app, request, send_from_directory
 import os
 import socket
 
 blueprint = Blueprint('blogs', 'blogs')
+
 
 @blueprint.route('', endpoint='list')
 class BlogListAPI(MethodView):
@@ -107,24 +108,20 @@ class BlogAPI(MethodView):
 
 
 def allowed_file(filename):
-    ALLOWED_EXTENSIONS = set(['png',
-                              'jpg',
-                              'jpeg',
-                              'gif',
-                              'svg'])
+    ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'svg'])
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @blueprint.route('images/<path>', endpoint='detail')
 class BlogAPI(MethodView):
     def get(self, path):
-        directory = current_app.config['PROJECT_ROOT']+'/static/images/blog/'
-        return send_from_directory(filename=path,
-                            directory=directory)
+        directory = current_app.config['PROJECT_ROOT'] + '/static/images/blog/'
+        return send_from_directory(filename=path, directory=directory)
+
 
 @blueprint.route('/images', endpoint='upload_thumbnail')
 class BlogAPI(MethodView):
-
     def post(self):
         """Upload an image for the blog"""
         if 'file' not in request.files:
@@ -145,7 +142,10 @@ class BlogAPI(MethodView):
             file.save(os.path.join(path, filename))
 
             if current_app.config['DEBUG'] == True:
-                return {'link': f'http://localhost:5000/api/v0/blogs/images/{filename}'}
+                return {
+                    'link':
+                    f'http://localhost:5000/api/v0/blogs/images/{filename}'
+                }
 
             return {'link': f'{hostname}/api/v0/blogs/images/{filename}'}
         else:

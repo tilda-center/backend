@@ -9,8 +9,8 @@ SECRET_KEY = 'iQfPvB6sZaNHqVFI5CJa9rM1xOEVHKIM0LwifT04yLsPlZhSSvaDuZXOgJFSpJVq'
 
 class Config:
     NAME = app_name
-    API_TITLE = app_name
-    API_VERSION = 0
+    API_TITLE = app_name.capitalize()
+    API_VERSION = 'v0'
     PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
     DEBUG = False
     USE_AUTH = False
@@ -26,11 +26,11 @@ class Config:
     #  JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=1)
     #  JWT_REFRESH_TOKEN_EXPIRES = timedelta(seconds=10)
     OPENAPI_URL_PREFIX = '/doc'
-    OPENAPI_REDOC_PATH = '/redoc'
-    OPENAPI_SWAGGER_UI_PATH = '/swaggerui'
+    OPENAPI_REDOC_PATH = '/redoc/'
+    OPENAPI_REDOC_URL = '/static/redoc/'
+    OPENAPI_SWAGGER_UI_PATH = '/swaggerui/'
     OPENAPI_SWAGGER_UI_URL = '/static/swaggerui/'
     OPENAPI_VERSION = '3.0.2'
-    COLLECT_STATIC_ROOT = 'static'
     MEDIA_URL = '/media'
     MEDIA_PATH = 'media'
     ACCOUNT_REQUEST_EXPIRY = 24  # in hours

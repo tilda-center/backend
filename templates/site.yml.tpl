@@ -7,5 +7,3 @@
   roles:
     - onelove-roles.freebsd-common
     - onelove-roles.freebsd_freenit
-    - onelove-roles.freebsd_freenit_sql
-    - tilda

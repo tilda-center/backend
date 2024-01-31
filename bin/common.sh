@@ -1,29 +1,37 @@
 #!/bin/sh
 
+
 export BIN_DIR=`dirname $0`
 export PROJECT_ROOT="${BIN_DIR}/.."
 . "${PROJECT_ROOT}/name.py"
 export VIRTUALENV=${VIRTUALENV:="${app_name}"}
-export FLASK_ENV=${FLASK_ENV:="production"}
-export PY_VERSION=${PY_VERSION:="3.7"}
+export FREENIT_ENV=${FREENIT_ENV:="prod"}
 export SYSPKG=${SYSPKG:="no"}
-export DBTYPE=${DBTYPE:="sql"}
 
 
 setup() {
-  cd "${PROJECT_ROOT}"
-  if [ "${SYSPKG}" = "no" ]; then
+  cd ${PROJECT_ROOT}
+  if [ "${SYSPKG}" != "YES" ]; then
     update=${1}
     if [ ! -d ${HOME}/.virtualenvs/${VIRTUALENV} ]; then
         python${PY_VERSION} -m venv "${HOME}/.virtualenvs/${VIRTUALENV}"
     fi
     . ${HOME}/.virtualenvs/${VIRTUALENV}/bin/activate
 
-    cd ${PROJECT_ROOT}
+    INSTALL_TARGET=".[${FREENIT_ENV}]"
+    if [ "${FREENIT_ENV}" = "prod" ]; then
+      INSTALL_TARGET="."
+    fi
     if [ "${update}" != "no" ]; then
-      pip install -U --upgrade-strategy eager pip
-      pip install -U --upgrade-strategy eager wheel
-      pip install -U --upgrade-strategy eager -e ".[${DBTYPE}]"
+      pip install -U pip
+      pip install -U wheel
+      pip install -U --upgrade-strategy eager -e "${INSTALL_TARGET}"
     fi
   fi
+
+  if [ ! -e "alembic/versions" ]; then
+    mkdir alembic/versions
+    alembic revision --autogenerate -m initial
+  fi
+  alembic upgrade head
 }

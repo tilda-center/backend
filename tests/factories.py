@@ -1,32 +1,28 @@
-from importlib import import_module
-
-from flask_security.utils import hash_password
-
 import factory
-from name import app_name
+from passlib.hash import pbkdf2_sha256
 
-user = import_module(f'{app_name}.models.user')
-role = import_module(f'{app_name}.models.role')
+from freenit.config import getConfig
+from freenit.models.role import Role as RoleModel
+
+config = getConfig()
+auth = config.get_model("user")
 
 
-class UserFactory(factory.Factory):
+class User(factory.Factory):
     class Meta:
-        model = user.User
+        model = auth.User
 
-    first_name = factory.Faker('first_name')
-    last_name = factory.Faker('last_name')
-    email = factory.Faker('email')
-    password = factory.LazyAttribute(lambda a: hash_password('Sekrit'))
-    username = factory.Faker('name')
+    email = factory.Faker("email")
+    password = pbkdf2_sha256.hash(f"{config.secret}Sekrit")
     active = True
 
 
-class AdminFactory(UserFactory):
-    admin = True
+class InactiveUser(User):
+    active = False
 
 
-class RoleFactory(factory.Factory):
+class Role(factory.Factory):
     class Meta:
-        model = role.Role
+        model = RoleModel
 
-    name = factory.Faker('first_name')
+    name = factory.Faker("pystr")

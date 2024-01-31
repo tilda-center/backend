@@ -1,5 +1,0 @@
----
-tilda_packages:
-  - name: "{{ python_prefix }}-ldap3"
-  - name: "{{ python_prefix }}-sortedcontainers"
-  - name: "{{ python_prefix }}-unidecode"

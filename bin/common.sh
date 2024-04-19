@@ -7,6 +7,7 @@ export PROJECT_ROOT="${BIN_DIR}/.."
 export VIRTUALENV=${VIRTUALENV:="${app_name}"}
 export FREENIT_ENV=${FREENIT_ENV:="prod"}
 export SYSPKG=${SYSPKG:="no"}
+export OFFLINE=${OFFLINE:="no"}
 
 
 setup() {
@@ -22,7 +23,7 @@ setup() {
     if [ "${FREENIT_ENV}" = "prod" ]; then
       INSTALL_TARGET="."
     fi
-    if [ "${update}" != "no" ]; then
+    if [ "${update}" != "no" -a "${OFFLINE}" != "yes" ]; then
       pip install -U pip
       pip install -U wheel
       pip install -U --upgrade-strategy eager -e "${INSTALL_TARGET}"

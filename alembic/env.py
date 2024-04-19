@@ -1,11 +1,11 @@
 import os
 import sys
 
-import tilda.app
-from tilda.config import getConfig
-from alembic import context
+from freenit.config import getConfig
 from freenit.migration import run_migrations_offline, run_migrations_online
 
+import tilda.app
+from alembic import context
 
 sys.path.append(os.getcwd())
 config = getConfig()

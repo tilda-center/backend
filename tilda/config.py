@@ -19,4 +19,3 @@ except ImportError:
 configs[DevConfig.envname()] = DevConfig()
 configs[TestConfig.envname()] = TestConfig()
 configs[ProdConfig.envname()] = ProdConfig()
-print(configs['dev'].user)

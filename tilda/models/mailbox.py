@@ -1,8 +1,9 @@
 import email
 import email.header
-from imaplib import IMAP4_SSL, IMAP4
+from imaplib import IMAP4, IMAP4_SSL
 from typing import List
 
+import mailparser
 from fastapi import HTTPException
 from freenit.config import getConfig
 from pydantic import BaseModel, Field
@@ -153,14 +154,58 @@ class Mailbox(BaseModel):
                 if type(msg) != tuple:
                     continue
                 i += 1
-                mail = email.message_from_bytes(msg[1])
+                mail = mailparser.parse_from_bytes(msg[1])
+                from_ = [f"{d[0]} <{d[1]}>" for d in mail.from_]
+                to = [f"{d[0]} <{d[1]}>" for d in mail.to]
                 e = EMail(
                     id=i,
-                    msgid=str(mail["message-id"]),
-                    date=str(mail["date"]),
-                    subject=get_header(mail, "subject"),
-                    from_addr=get_header(mail, "from"),
-                    to=get_header(mail, "to"),
+                    msgid=mail.message_id,
+                    date=mail.date.strftime("%Y:%m:%dT%H:%M:%S"),
+                    subject=mail.subject,
+                    from_addr=', '.join(from_),
+                    to=', '.join(to),
+                    body=mail.body,
                 )
                 result.append(e)
         return result
+
+    async def email(self, user, id):
+        with IMAP4_SSL(config.mail.server) as M:
+            try:
+                M.login(
+                    f"{user.email}*{config.mail.master_user}", config.mail.master_pw
+                )
+            except IMAP4.error:
+                raise HTTPException(status_code=403, detail="Failed to login to mail server")
+            status, nmess = M.select(self.name)
+            if status != "OK":
+                raise HTTPException(status_code=409, detail="Error selecting folder")
+            if nmess[0] is None:
+                raise HTTPException(
+                    status_code=409, detail="Invalid data from mail server"
+                )
+            try:
+                status, msgs = M.fetch(f"{id}", "(RFC822)")
+            except IMAP4.error as e:
+                raise HTTPException(
+                    status_code=409,
+                    detail=f"Error fetching from {self.name}: {e}",
+                )
+            if status != "OK":
+                raise HTTPException(
+                    status_code=409, detail=f"Error fetching from {self.name}"
+                )
+            (_, msg), _ = msgs
+            mail = mailparser.parse_from_bytes(msg)
+            from_ = [f"{d[0]} <{d[1]}>" for d in mail.from_]
+            to = [f"{d[0]} <{d[1]}>" for d in mail.to]
+            e = EMail(
+                id=id,
+                msgid=mail.message_id,
+                date=mail.date.strftime("%Y:%m:%dT%H:%M:%S"),
+                subject=mail.subject,
+                from_addr=', '.join(from_),
+                to=', '.join(to),
+                body=mail.body,
+            )
+            return e

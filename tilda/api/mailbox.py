@@ -43,3 +43,13 @@ class MailboxDetailAPI:
                 await mailbox.delete(user)
                 return mailbox
         raise HTTPException(status_code=409, detail="No such folder")
+
+
+@route("/folders/{folder}/{id}", tags=tags)
+class MailboxDetailAPI:
+    @staticmethod
+    @description("Get all emails from folder")
+    async def get(folder, id: int, user: User = Depends(user_perms)) -> EMail:
+        mailbox = await Mailbox.get(user, folder)
+        email = await mailbox.email(user, id)
+        return email

@@ -37,7 +37,10 @@ setup(
     ],
     packages=find_packages(exclude=["tests*"]),
     python_requires=">=3.8",
-    install_requires=["freenit[ormar]"],
+    install_requires=[
+        "freenit[ormar]",
+        "mail-parser",
+    ],
     extras_require={
         "build": ["freenit[build]"],
         "dev": ["freenit[dev]"],

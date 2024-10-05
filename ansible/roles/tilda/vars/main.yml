@@ -1,0 +1,3 @@
+---
+tilda_packages:
+  - name: "{{ python_prefix }}-mail-parser"

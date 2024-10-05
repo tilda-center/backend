@@ -10,6 +10,7 @@ ansible/roles/*
 ansible/site.yml
 !ansible/roles/.keep
 !ansible/roles/devel
+!ansible/roles/tilda
 
 alembic/versions/*
 build

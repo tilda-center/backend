@@ -1,0 +1,6 @@
+---
+- name: install tilda packages
+  with_items: "{{ tilda_packages }}"
+  pkgng:
+    name: "{{ item.name }}"
+    state: latest
